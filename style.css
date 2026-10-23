@@ -6,210 +6,579 @@
   box-sizing: border-box;
 }
 
+:root {
+  --color-background: #f3f5f8;
+  --color-surface: #ffffff;
+  --color-text: #1f2937;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+
+  --color-available-bg: #dcfce7;
+  --color-available-text: #166534;
+  --color-available-border: #86efac;
+
+  --color-sold-bg: #fee2e2;
+  --color-sold-text: #991b1b;
+  --color-sold-border: #fca5a5;
+
+  --color-unknown-bg: #f3f4f6;
+  --color-unknown-text: #4b5563;
+  --color-unknown-border: #d1d5db;
+
+  --color-primary: #1d4ed8;
+
+  --radius-small: 6px;
+  --radius-medium: 12px;
+  --radius-large: 16px;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
-  color: #1f2937;
-  background-color: #f3f4f6;
+  color: var(--color-text);
+  background: var(--color-background);
   line-height: 1.5;
 }
+
+/* =========================================
+   HLAVIČKA A HLAVNÝ OBSAH
+   ========================================= */
 
 header,
 main {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 24px;
 }
-
-/* =========================================
-   HLAVIČKA
-   ========================================= */
 
 header {
   padding-top: 32px;
   padding-bottom: 16px;
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
 h1 {
   margin: 0 0 8px;
   color: #111827;
-  font-size: 30px;
+  font-size: 32px;
+  line-height: 1.2;
 }
 
 h2 {
-  margin-top: 0;
+  margin: 0 0 6px;
   color: #111827;
+  font-size: 23px;
 }
 
-p {
-  margin-top: 0;
+.subtitle {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 15px;
 }
 
-/* =========================================
-   INFORMAČNÉ ČASTI
-   ========================================= */
-
-#current-date {
-  color: #4b5563;
-  font-size: 16px;
-}
-
-#data-notice {
-  margin: 16px 0;
-  padding: 14px 16px;
-  color: #92400e;
-  background-color: #fef3c7;
-  border: 1px solid #fcd34d;
-  border-radius: 8px;
-}
-
-#last-update {
+.header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  color: #374151;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-indicator {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  background: #22c55e;
+  border-radius: 50%;
 }
 
 /* =========================================
-   LEGENDA STAVOV
+   INFORMAČNÝ PANEL
    ========================================= */
 
-.status-legend {
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 10px 0 20px;
+}
+
+.toolbar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1 1 180px;
+  padding: 16px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+}
+
+.toolbar-label {
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.toolbar-item strong {
+  color: #111827;
+  font-size: 15px;
+}
+
+/* =========================================
+   LEGENDA DOSTUPNOSTI
+   ========================================= */
+
+.legend {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  margin: 20px 0;
+  gap: 12px 22px;
+  margin: 20px 0 24px;
+  padding: 15px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
 }
 
-.status-legend > * {
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #4b5563;
+  font-size: 13px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.legend-color.available {
+  background: #22c55e;
+}
+
+.legend-color.sold-out {
+  background: #ef4444;
+}
+
+.legend-color.unknown {
+  background: #9ca3af;
+}
+
+/* =========================================
+   SEKCIА KALENDÁRA
+   ========================================= */
+
+.calendar-section {
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  box-shadow: 0 4px 16px rgb(15 23 42 / 4%);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.section-heading p {
   margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.date-display {
+  padding: 10px 14px;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
 }
 
 /* =========================================
    TABUĽKA OBSADENOSTI
+   Kurty = riadky
+   Časy = stĺpce
    ========================================= */
 
-.table-container {
+.table-wrapper {
   width: 100%;
   overflow-x: auto;
-  margin-top: 20px;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  -webkit-overflow-scrolling: touch;
 }
 
-table {
+.availability-table {
   width: 100%;
-  min-width: 650px;
-  border-collapse: collapse;
-  background-color: #ffffff;
+  min-width: 900px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--color-surface);
 }
 
-thead,
-#calendar-head {
-  background-color: #e5e7eb;
+.availability-table thead {
+  background: #f8fafc;
 }
 
-th,
-td {
-  padding: 14px 16px;
+.availability-table th,
+.availability-table td {
+  padding: 18px 12px;
   text-align: center;
-  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
-th {
-  font-weight: 700;
-  color: #374151;
+.availability-table tr > *:last-child {
+  border-right: none;
 }
 
-tbody th {
-  white-space: nowrap;
-  background-color: #f9fafb;
-}
-
-tbody tr:last-child th,
-tbody tr:last-child td {
+.availability-table tbody tr:last-child > * {
   border-bottom: none;
 }
 
-tbody tr:hover {
-  background-color: #f9fafb;
+.availability-table thead th {
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.availability-table .court-heading {
+  width: 160px;
+  min-width: 140px;
+  color: #374151;
+  background: #f3f4f6;
+  text-align: left;
+  padding-left: 22px;
+}
+
+.availability-table .time-heading {
+  min-width: 110px;
+  white-space: nowrap;
+}
+
+.availability-table .court-name-cell {
+  min-width: 140px;
+  padding-left: 22px;
+  color: #111827;
+  background: #f9fafb;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.availability-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.availability-table tbody tr:hover > th,
+.availability-table tbody tr:hover > td {
+  background-color: #fafcff;
 }
 
 /* =========================================
-   ŠTÍTKY STAVOV OBSADENOSTI
+   ŠTÍTKY STAVOV
    ========================================= */
 
 .status {
-  display: inline-block;
-  min-width: 95px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 94px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.35px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Voľný kurt */
+
+.status-available {
+  color: var(--color-available-text);
+  background: var(--color-available-bg);
+  border-color: var(--color-available-border);
+}
+
+/* Vypredaný kurt */
+
+.status-sold {
+  color: var(--color-sold-text);
+  background: var(--color-sold-bg);
+  border-color: var(--color-sold-border);
+}
+
+/* Neoverený stav */
+
+.status-unknown {
+  color: var(--color-unknown-text);
+  background: var(--color-unknown-bg);
+  border-color: var(--color-unknown-border);
+}
+
+/* =========================================
+   ÚPLNE VYPREDANÝ ČAS
+   Oba kurty sú vypredané.
+   ========================================= */
+
+.sold-out-column {
+  background-color: #fff1f2 !important;
+}
+
+.sold-out-column .sold-out-time,
+.sold-out-time {
+  color: #b91c1c;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: #dc2626;
+}
+
+.availability-table td.sold-out-cell {
+  background-color: #fff7f7;
+}
+
+/* =========================================
+   STAV NAČÍTAVANIA A CHYB
+   ========================================= */
+
+.loading-message {
+  padding: 32px 20px !important;
+  color: var(--color-muted);
+  background: #ffffff;
+  font-size: 14px;
   text-align: center;
 }
 
-/* Voľný termín – zelená */
-
-.status-available {
-  color: #166534;
-  background-color: #dcfce7;
-  border: 1px solid #86efac;
-}
-
-/* Vypredaný termín – červená */
-
-.status-sold {
-  color: #991b1b;
-  background-color: #fee2e2;
-  border: 1px solid #fca5a5;
-}
-
-/* Neznámy stav – sivá */
-
-.status-unknown {
-  color: #374151;
-  background-color: #e5e7eb;
-  border: 1px solid #d1d5db;
+#data-notice {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-medium);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 /* =========================================
-   PÄTA A DOPLNKOVÉ INFORMÁCIE
+   PÄTA
    ========================================= */
 
-footer {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 24px 32px;
-  color: #6b7280;
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 0 8px;
+  color: var(--color-muted);
   font-size: 13px;
 }
 
+.footer > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer strong {
+  color: #374151;
+}
+
+.last-update {
+  text-align: right;
+}
+
+#last-update {
+  font-weight: 700;
+}
+
 /* =========================================
-   ZOBRAZENIE NA MOBILNÝCH ZARIADENIACH
+   TABLET
+   ========================================= */
+
+@media (max-width: 900px) {
+  header,
+  main {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .calendar-section {
+    padding: 18px;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .date-display {
+    text-align: left;
+  }
+
+  .availability-table {
+    min-width: 850px;
+  }
+
+  .availability-table th,
+  .availability-table td {
+    padding: 14px 10px;
+  }
+}
+
+/* =========================================
+   MOBIL
    ========================================= */
 
 @media (max-width: 600px) {
   header,
   main {
-    padding: 16px;
+    padding: 14px;
+  }
+
+  header {
+    padding-top: 22px;
+  }
+
+  .header-content {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 25px;
   }
 
-  .status-legend {
-    gap: 8px;
+  h2 {
+    font-size: 20px;
   }
 
-  th,
-  td {
-    padding: 10px;
+  .subtitle {
+    font-size: 14px;
   }
 
-  footer {
-    padding: 0 16px 24px;
+  .header-status {
+    font-size: 12px;
+  }
+
+  .toolbar {
+    gap: 10px;
+  }
+
+  .toolbar-item {
+    flex-basis: 100%;
+    padding: 13px 15px;
+  }
+
+  .legend {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .legend-item {
+    font-size: 12px;
+  }
+
+  .calendar-section {
+    padding: 14px;
+    border-radius: var(--radius-medium);
+  }
+
+  .section-heading {
+    margin-bottom: 16px;
+  }
+
+  .section-heading p {
+    font-size: 13px;
+  }
+
+  .date-display {
+    max-width: 100%;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+
+  .availability-table {
+    min-width: 820px;
+  }
+
+  .availability-table th,
+  .availability-table td {
+    padding: 12px 8px;
+  }
+
+  .availability-table .court-heading,
+  .availability-table .court-name-cell {
+    padding-left: 12px;
+  }
+
+  .status {
+    min-width: 86px;
+    min-height: 33px;
+    padding: 6px 7px;
+    font-size: 10px;
+  }
+
+  #data-notice {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 20px;
+  }
+
+  .last-update {
+    text-align: left;
   }
 }

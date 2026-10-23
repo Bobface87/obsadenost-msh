@@ -7,13 +7,11 @@ const API_URL =
 const courts = [
   {
     key: "left",
-    name: "Ľavý kurt",
-    apiName: "Ľavý"
+    name: "Ľavý kurt"
   },
   {
     key: "right",
-    name: "Pravý kurt",
-    apiName: "Pravý"
+    name: "Pravý kurt"
   }
 ];
 
@@ -22,6 +20,10 @@ const statusLabels = {
   sold: "VYPREDANÉ",
   unknown: "NEOVERENÉ"
 };
+
+/* =========================================
+   DÁTUM A ČAS
+   ========================================= */
 
 function getLocalDateKey(date = new Date()) {
   const year = date.getFullYear();
@@ -52,7 +54,15 @@ function formatTime(date) {
   });
 }
 
+/* =========================================
+   SPRACOVANIE ÚDAJOV Z REZERVAČNÉHO SYSTÉMU
+   ========================================= */
+
 function getCourtFromName(name) {
+  if (typeof name !== "string") {
+    return null;
+  }
+
   if (name.includes("(Ľavý)")) {
     return "left";
   }
@@ -65,7 +75,10 @@ function getCourtFromName(name) {
 }
 
 function getTimeFromItem(item) {
-  if (typeof item.time === "string" && /^\d{2}:\d{2}$/.test(item.time)) {
+  if (
+    typeof item.time === "string" &&
+    /^\d{2}:\d{2}$/.test(item.time)
+  ) {
     return item.time;
   }
 
@@ -81,12 +94,19 @@ function getItemStatus(item) {
     return "sold";
   }
 
-  if (typeof item.url === "string" && item.url.trim() !== "") {
+  if (
+    typeof item.url === "string" &&
+    item.url.trim() !== ""
+  ) {
     return "available";
   }
 
   return "unknown";
 }
+
+/* =========================================
+   INFORMAČNÁ SPRÁVA
+   ========================================= */
 
 function setNotice(message, type = "info") {
   const notice = document.getElementById("data-notice");
@@ -107,21 +127,33 @@ function setNotice(message, type = "info") {
     type === "error" ? "#fca5a5" : "#a7f3d0";
 }
 
+/* =========================================
+   NAČÍTAVACÍ STAV
+   ========================================= */
+
 function showLoadingMessage(message) {
   const body = document.getElementById("calendar-body");
 
-  if (body) {
-    body.innerHTML = `
-      <tr>
-        <td colspan="3" class="loading-message">
-          ${message}
-        </td>
-      </tr>
-    `;
+  if (!body) {
+    return;
   }
+
+  body.innerHTML = `
+    <tr>
+      <td colspan="9" class="loading-message">
+        ${message}
+      </td>
+    </tr>
+  `;
 }
 
-function renderTableHeader() {
+/* =========================================
+   HLAVIČKA TABUĽKY
+   Kurty budú v riadkoch,
+   hodinové termíny v stĺpcoch.
+   ========================================= */
+
+function renderTableHeader(slots) {
   const head = document.getElementById("calendar-head");
 
   if (!head) {
@@ -130,18 +162,40 @@ function renderTableHeader() {
 
   head.innerHTML = `
     <tr>
-      <th scope="col">ČAS</th>
-      <th scope="col">ĽAVÝ KURT</th>
-      <th scope="col">PRAVÝ KURT</th>
+      <th scope="col" class="court-heading">
+        KURT
+      </th>
+
+      ${slots.map(slot => {
+        const bothSoldOut =
+          slot.left?.status === "sold" &&
+          slot.right?.status === "sold";
+
+        return `
+          <th
+            scope="col"
+            class="time-heading ${bothSoldOut ? "sold-out-column" : ""}"
+          >
+            <span class="${bothSoldOut ? "sold-out-time" : ""}">
+              ${slot.time}
+            </span>
+          </th>
+        `;
+      }).join("")}
     </tr>
   `;
 }
 
+/* =========================================
+   STAVOVÝ ŠTÍTOK
+   ========================================= */
+
 function createStatusCell(status, courtName, time) {
-  const label = statusLabels[status] || statusLabels.unknown;
+  const label =
+    statusLabels[status] || statusLabels.unknown;
 
   return `
-    <td class="court-cell">
+    <td class="court-cell status-cell-${status}">
       <span
         class="status status-${status}"
         title="${courtName}, ${time}: ${label}"
@@ -152,17 +206,12 @@ function createStatusCell(status, courtName, time) {
   `;
 }
 
-function renderAvailability(items, now) {
-  const body = document.getElementById("calendar-body");
+/* =========================================
+   VÝBER NAJBLIŽŠÍCH TERMÍNOV
+   ========================================= */
 
-  if (!body) {
-    return;
-  }
-
-  const currentDateKey = getLocalDateKey(now);
+function prepareTimeSlots(items, now) {
   const currentHour = now.getHours();
-
-  // Vytvoríme mapu termínov podľa času a kurtu.
   const slots = new Map();
 
   for (const item of items) {
@@ -179,10 +228,13 @@ function renderAvailability(items, now) {
     }
 
     const hour = Number(time.slice(0, 2));
+    const minute = Number(time.slice(3, 5));
 
-    // Nezobrazujeme termíny, ktoré sa už začali
-    // v predchádzajúcich hodinách.
-    if (hour < currentHour) {
+    // Nezobrazujeme už začaté ani minulé termíny.
+    const slotStart = new Date(now);
+    slotStart.setHours(hour, minute, 0, 0);
+
+    if (slotStart <= now) {
       continue;
     }
 
@@ -194,24 +246,36 @@ function renderAvailability(items, now) {
       });
     }
 
-    const slot = slots.get(time);
-
-    slot[courtKey] = {
+    slots.get(time)[courtKey] = {
       status: getItemStatus(item),
       item
     };
   }
 
-  // Zobrazíme najviac 8 najbližších časov,
-  // ktoré sú uvedené v odpovedi rezervačného systému.
-  const visibleSlots = Array.from(slots.values())
+  return Array.from(slots.values())
     .sort((a, b) => a.time.localeCompare(b.time))
     .slice(0, MAX_TIME_SLOTS);
+}
+
+/* =========================================
+   VYKRESLENIE TABUĽKY
+   ========================================= */
+
+function renderAvailability(items, now) {
+  const body = document.getElementById("calendar-body");
+
+  if (!body) {
+    return;
+  }
+
+  const visibleSlots = prepareTimeSlots(items, now);
 
   if (visibleSlots.length === 0) {
+    renderTableHeader([]);
+
     body.innerHTML = `
       <tr>
-        <td colspan="3" class="loading-message">
+        <td colspan="9" class="loading-message">
           Na dnešok sa nenašli žiadne ďalšie hodinové termíny.
         </td>
       </tr>
@@ -219,66 +283,104 @@ function renderAvailability(items, now) {
 
     setNotice(
       "Spojenie s rezervačným systémom funguje, " +
-      "ale v odpovedi nie sú ďalšie dnešné termíny."
+      "ale na dnešok už nie sú dostupné ďalšie hodinové termíny."
     );
 
     return;
   }
 
-  body.innerHTML = visibleSlots.map(slot => {
-    const leftStatus = slot.left
-      ? slot.left.status
-      : "unknown";
+  renderTableHeader(visibleSlots);
 
-    const rightStatus = slot.right
-      ? slot.right.status
-      : "unknown";
-
-    const bothSoldOut =
-      leftStatus === "sold" &&
-      rightStatus === "sold";
-
-    const rowClass = bothSoldOut
-      ? "sold-out-row"
-      : "";
-
-    const timeMarkup = bothSoldOut
-      ? `<span class="sold-out-time">${slot.time}</span>`
-      : slot.time;
-
+  body.innerHTML = courts.map(court => {
     return `
-      <tr class="${rowClass}">
-        <th scope="row" class="time-cell">
-          ${timeMarkup}
+      <tr class="court-row court-row-${court.key}">
+        <th scope="row" class="court-name-cell">
+          ${court.name}
         </th>
 
-        ${createStatusCell(
-          leftStatus,
-          courts[0].name,
-          slot.time
-        )}
+        ${visibleSlots.map(slot => {
+          const courtData = slot[court.key];
 
-        ${createStatusCell(
-          rightStatus,
-          courts[1].name,
-          slot.time
-        )}
+          const status = courtData
+            ? courtData.status
+            : "unknown";
+
+          return createStatusCell(
+            status,
+            court.name,
+            slot.time
+          );
+        }).join("")}
       </tr>
     `;
   }).join("");
+
+  // Označenie termínov, v ktorých sú oba kurty vypredané.
+  visibleSlots.forEach(slot => {
+    const bothSoldOut =
+      slot.left?.status === "sold" &&
+      slot.right?.status === "sold";
+
+    if (!bothSoldOut) {
+      return;
+    }
+
+    const columnIndex = visibleSlots.indexOf(slot) + 2;
+
+    const headerCell = document.querySelector(
+      `#calendar-head th:nth-child(${columnIndex})`
+    );
+
+    if (headerCell) {
+      headerCell.classList.add("sold-out-column");
+
+      const timeElement = headerCell.querySelector("span");
+
+      if (timeElement) {
+        timeElement.classList.add("sold-out-time");
+      }
+    }
+
+    const bodyCells = document.querySelectorAll(
+      `#calendar-body tr td:nth-child(${columnIndex})`
+    );
+
+    bodyCells.forEach(cell => {
+      cell.classList.add("sold-out-cell");
+    });
+  });
 
   const fullySoldOutCount = visibleSlots.filter(slot =>
     slot.left?.status === "sold" &&
     slot.right?.status === "sold"
   ).length;
 
+  const unknownCount = visibleSlots.reduce((count, slot) => {
+    let unknown = 0;
+
+    if (!slot.left || slot.left.status === "unknown") {
+      unknown++;
+    }
+
+    if (!slot.right || slot.right.status === "unknown") {
+      unknown++;
+    }
+
+    return count + unknown;
+  }, 0);
+
   setNotice(
     `Živé údaje z rezervačného systému Nitra.sk. ` +
     `Zobrazených termínov: ${visibleSlots.length}. ` +
-    `Vypredané termíny: ${fullySoldOutCount}. ` +
+    `Úplne vypredané termíny: ${fullySoldOutCount}. ` +
+    `Neoverené stavy kurtov: ${unknownCount}. ` +
     `Automatická aktualizácia každých 5 minút.`
   );
 }
+
+/* =========================================
+   NAČÍTANIE DÁT Z CLOUDFLARE WORKERA
+   ========================================= */
 
 async function loadAvailability() {
   const now = new Date();
@@ -295,8 +397,6 @@ async function loadAvailability() {
   }
 
   currentDate.textContent = formatDate(now);
-
-  renderTableHeader();
 
   showLoadingMessage("Načítavam skutočnú dostupnosť kurtov...");
 
@@ -333,8 +433,27 @@ async function loadAvailability() {
     const todayItems = result.data.days[todayKey];
 
     if (!Array.isArray(todayItems)) {
-      renderAvailability([], now);
+      renderTableHeader([]);
+
+      const body = document.getElementById("calendar-body");
+
+      if (body) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="9" class="loading-message">
+              Rezervačný systém nevrátil termíny pre dnešný dátum.
+            </td>
+          </tr>
+        `;
+      }
+
       lastUpdate.textContent = formatTime(new Date());
+
+      setNotice(
+        `Dáta boli načítané, ale pre dnešný dátum (${todayKey}) ` +
+        "sa nenašli žiadne termíny.",
+        "error"
+      );
 
       console.log(
         "Rezervačný systém nevrátil termíny pre dnešný dátum:",
@@ -374,10 +493,12 @@ async function loadAvailability() {
   }
 }
 
-// Prvé načítanie po otvorení stránky.
+/* =========================================
+   SPUSTENIE A AUTOMATICKÁ AKTUALIZÁCIA
+   ========================================= */
+
 loadAvailability();
 
-// Automatická aktualizácia každých 5 minút.
 setInterval(() => {
   loadAvailability();
 }, REFRESH_INTERVAL);
