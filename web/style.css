@@ -1,0 +1,215 @@
+/* =========================================
+   ZÁKLADNÉ NASTAVENIA
+   ========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2937;
+  background-color: #f3f4f6;
+  line-height: 1.5;
+}
+
+header,
+main {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* =========================================
+   HLAVIČKA
+   ========================================= */
+
+header {
+  padding-top: 32px;
+  padding-bottom: 16px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 30px;
+}
+
+h2 {
+  margin-top: 0;
+  color: #111827;
+}
+
+p {
+  margin-top: 0;
+}
+
+/* =========================================
+   INFORMAČNÉ ČASTI
+   ========================================= */
+
+#current-date {
+  color: #4b5563;
+  font-size: 16px;
+}
+
+#data-notice {
+  margin: 16px 0;
+  padding: 14px 16px;
+  color: #92400e;
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+}
+
+#last-update {
+  font-weight: 600;
+}
+
+/* =========================================
+   LEGENDA STAVOV
+   ========================================= */
+
+.status-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.status-legend > * {
+  margin: 0;
+}
+
+/* =========================================
+   TABUĽKA OBSADENOSTI
+   ========================================= */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  min-width: 650px;
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+thead,
+#calendar-head {
+  background-color: #e5e7eb;
+}
+
+th,
+td {
+  padding: 14px 16px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  font-weight: 700;
+  color: #374151;
+}
+
+tbody th {
+  white-space: nowrap;
+  background-color: #f9fafb;
+}
+
+tbody tr:last-child th,
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* =========================================
+   ŠTÍTKY STAVOV OBSADENOSTI
+   ========================================= */
+
+.status {
+  display: inline-block;
+  min-width: 95px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Voľný termín – zelená */
+
+.status-available {
+  color: #166534;
+  background-color: #dcfce7;
+  border: 1px solid #86efac;
+}
+
+/* Vypredaný termín – červená */
+
+.status-sold {
+  color: #991b1b;
+  background-color: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+
+/* Neznámy stav – sivá */
+
+.status-unknown {
+  color: #374151;
+  background-color: #e5e7eb;
+  border: 1px solid #d1d5db;
+}
+
+/* =========================================
+   PÄTA A DOPLNKOVÉ INFORMÁCIE
+   ========================================= */
+
+footer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 32px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* =========================================
+   ZOBRAZENIE NA MOBILNÝCH ZARIADENIACH
+   ========================================= */
+
+@media (max-width: 600px) {
+  header,
+  main {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .status-legend {
+    gap: 8px;
+  }
+
+  th,
+  td {
+    padding: 10px;
+  }
+
+  footer {
+    padding: 0 16px 24px;
+  }
+}

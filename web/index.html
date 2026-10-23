@@ -1,0 +1,118 @@
+```html
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Obsadenosť športovísk – MŠH Nitra</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <p class="eyebrow">MESTSKÁ ŠPORTOVÁ HALA NITRA</p>
+                <h1>Prehľad obsadenosti kurtov</h1>
+                <p class="subtitle">Squash · Dostupnosť jednotlivých kurtov</p>
+            </div>
+
+            <div class="header-status">
+                <span class="status-indicator"></span>
+                <span>Prehľad športovísk</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <section class="toolbar">
+            <div class="toolbar-item">
+                <span class="toolbar-label">ŠPORT</span>
+                <strong>Squash</strong>
+            </div>
+
+            <div class="toolbar-item">
+                <span class="toolbar-label">ZOBRAZENIE</span>
+                <strong>8 najbližších hodinových slotov</strong>
+            </div>
+
+            <div class="toolbar-item">
+                <span class="toolbar-label">AKTUALIZÁCIA</span>
+                <strong>Každých 5 minút</strong>
+            </div>
+        </section>
+
+        <section class="legend">
+            <div class="legend-item">
+                <span class="legend-color available"></span>
+                <span>Voľný kurt</span>
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-color sold-out"></span>
+                <span>Vypredané</span>
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-color unknown"></span>
+                <span>Nedostupné / neoverené</span>
+            </div>
+        </section>
+
+        <section class="calendar-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Obsadenosť podľa času</h2>
+                    <p>Prehľad jednotlivých kurtov a rezervovateľných termínov</p>
+                </div>
+
+                <div class="date-display" id="current-date">
+                    Načítavam dátum...
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="availability-table">
+                    <thead id="calendar-head">
+                        <tr>
+                            <th>KURT</th>
+                            <th>NAČÍTAVAM...</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="calendar-body">
+                        <tr>
+                            <td colspan="9" class="loading-message">
+                                Pripravujem prehľad...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="data-notice" id="data-notice">
+                Toto je testovacie rozhranie. Skutočná dostupnosť zatiaľ nie je pripojená.
+            </p>
+        </section>
+
+        <footer class="footer">
+            <div>
+                <strong>Obsadenosť MŠH Nitra</strong>
+                <span>Interný prehľad pre správcov športovísk</span>
+            </div>
+
+            <div class="last-update">
+                Posledná aktualizácia:
+                <strong id="last-update">Zatiaľ bez údajov</strong>
+            </div>
+        </footer>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
+```
